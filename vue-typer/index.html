@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <link rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous">
+    <title>Welcome to Vue-typer</title>
+    <script src="https://unpkg.com/vue"></script>
+  </head>
+  <div id="app" class="container mt-2">
+      <h1>{{ title }}</h1>
+        <div class="row">
+          <div class="col-8">
+            <div class="paragraph" v-html="outputHTML">
+              {{ originalParagraph }}
+            </div>
+            <div class="typer mt-3">
+                <textarea class="form-control"
+                          id="exampleFormControlTextarea1"
+                          rows="10"
+                          placeholder="start typing here"
+                          v-model="typedText"></textarea>
+              </div>
+          </div>
+      </div>
+     </div>
+
+    <script>
+      const PARAGRAPH = `There is a theory which states that if ever anyone discovers exactly what the 
+      Universe is for and why it is here, it will instantly disappear and be replaced by something even 
+      more bizarre and inexplicable. There is another theory which states that this has already happened.`
+      var app = new Vue({
+        el: '#app',
+        data: {
+          title: 'Vue-typer',
+          originalParagraph: PARAGRAPH,
+          typedText: '',
+          typoIndex: -1
+        },
+        computed: {
+          outputHTML: function() {
+            let newHTML = '<span class="correct">'
+            if (this.typoIndex === -1) {
+              newHTML += this.originalText.substr(0, this.typedText.length)
+              newHTML += '</span>'
+              newHTML += this.originalText.substr(this.typedText.length)
+
+              return newHTML
+            }
+
+            newHTML += this.originalText.substr(0, this.typoIndex)
+            newHTML += '</span>'
+            newHTML += '<span class="typo">'
+            newHTML += this.originalText.substring(this.typoIndex, this.typedText.length)
+            newHTML += '</span>'
+            newHTML += this.originalText.substr(this.typedText.length)
+
+            return newHTML
+          }
+      },
+      watch: {
+        typedText: function(value) {
+          for (let i = 0; i < value.length; i++) {
+            if (value[i] !== this.originalText[i]) {
+              this.typoIndex = i;
+              break;
+            }
+            this.typoIndex = -1;
+          }
+        }
+      }
+      });
+
+    </script>
+    <style>
+        .correct {
+          color: rgb(63,81,181);
+          font-size: 22px;
+        }
+    
+        .typo {
+          color: #f00;
+          font-size: 22px;
+        }
+      </style>
+  </body>
+</html>
